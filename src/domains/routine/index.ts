@@ -5,6 +5,8 @@ export {
   RoutineSchema,
 } from "@/domains/routine/types";
 export type { Rhythm, Routine, RoutineDraft } from "@/domains/routine/types";
+export { categoryNames, groupRoutines, resolveCategory } from "@/domains/routine/category";
+export type { RoutineGroup } from "@/domains/routine/category";
 export { DEFAULT_TIMES_PER_WEEK, formatRhythm } from "@/domains/routine/rhythm";
 export {
   currentProgress,

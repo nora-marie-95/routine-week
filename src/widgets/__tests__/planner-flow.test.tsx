@@ -44,4 +44,26 @@ describe("planning a routine across the week", () => {
     });
     expect(screen.getByText("Call the dentist")).toBeTruthy();
   });
+
+  it("groups routines under the categories they were given", async () => {
+    await render(<RoutinesScreen />);
+    await fireEvent.press(screen.getByTestId("add-routine-fab"));
+    await fireEvent.changeText(screen.getByTestId("add-routine-input"), "Dishes");
+    await fireEvent.press(screen.getByTestId("category-chip-new"));
+    await fireEvent.changeText(screen.getByTestId("category-new-input"), "chores");
+    await fireEvent(screen.getByTestId("category-new-input"), "submitEditing");
+    await fireEvent.press(screen.getByText("Add"));
+
+    await fireEvent.press(screen.getByTestId("add-routine-fab"));
+    await fireEvent.changeText(screen.getByTestId("add-routine-input"), "Read");
+    await fireEvent.press(screen.getByText("Add"));
+
+    expect(
+      useAppStore.getState().routines.map((item) => {
+        return item.category;
+      }),
+    ).toEqual(["chores", undefined]);
+    expect(screen.getByText("chores")).toBeTruthy();
+    expect(screen.getByText("No category")).toBeTruthy();
+  });
 });

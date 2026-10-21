@@ -20,6 +20,8 @@ export const RoutineSchema = z.object({
   id: z.string(),
   title: z.string().min(1),
   rhythm: RhythmSchema,
+  /** Optional free-text group such as "Chores"; routines sharing a name are shown together. */
+  category: z.string().min(1).optional(),
   createdAt: z.number(),
 });
 export type Routine = z.infer<typeof RoutineSchema>;
@@ -27,5 +29,6 @@ export type Routine = z.infer<typeof RoutineSchema>;
 export const RoutineDraftSchema = RoutineSchema.pick({
   title: true,
   rhythm: true,
+  category: true,
 });
 export type RoutineDraft = z.infer<typeof RoutineDraftSchema>;

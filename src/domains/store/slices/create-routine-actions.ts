@@ -20,6 +20,7 @@ export const createRoutineActions: StateCreator<
             id: createId(),
             title: draft.title,
             rhythm: draft.rhythm,
+            category: draft.category,
             createdAt: Date.now(),
           });
         });
@@ -41,6 +42,16 @@ export const createRoutineActions: StateCreator<
           });
           if (routine) {
             routine.rhythm = rhythm;
+          }
+        });
+      },
+      setCategory: (id, category) => {
+        set((state) => {
+          const routine = state.routines.find((item) => {
+            return item.id === id;
+          });
+          if (routine) {
+            routine.category = category;
           }
         });
       },

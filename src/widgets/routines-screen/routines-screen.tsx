@@ -1,4 +1,4 @@
-import { RhythmPicker, RoutineList, useRoutineComposer } from "@/features/routines";
+import { CategoryPicker, RhythmPicker, RoutineList, useRoutineComposer } from "@/features/routines";
 import { ComposerModal, Fab, Screen } from "@/shared/ui-kit";
 
 /** routine green, matching tailwind.config.js colors.routine. */
@@ -20,6 +20,7 @@ export const RoutinesScreen = () => {
         testID="add-routine-input"
       >
         <RhythmPicker value={composer.rhythm} onChange={composer.onChangeRhythm} />
+        <CategoryPicker value={composer.category} onChange={composer.onChangeCategory} />
       </ComposerModal>
     </Screen>
   );

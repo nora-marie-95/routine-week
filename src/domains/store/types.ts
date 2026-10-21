@@ -8,6 +8,7 @@ export type AppState = {
     create: (draft: RoutineDraft) => void;
     rename: (id: string, title: string) => void;
     setRhythm: (id: string, rhythm: Rhythm) => void;
+    setCategory: (id: string, category: string | undefined) => void;
     remove: (id: string) => void;
   };
   todo: {

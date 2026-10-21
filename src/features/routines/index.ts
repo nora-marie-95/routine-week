@@ -1,3 +1,4 @@
+export { CategoryPicker } from "@/features/routines/client/components/category-picker";
 export { RhythmPicker } from "@/features/routines/client/components/rhythm-picker";
 export { RoutineHistory } from "@/features/routines/client/components/routine-progress";
 export { RoutineList } from "@/features/routines/client/components/routine-list";

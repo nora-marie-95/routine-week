@@ -19,7 +19,7 @@ stack as `three-by-three`, cut down to what matters day to day.
 ## Data
 
 ```
-Routine  { id, title, rhythm, createdAt }
+Routine  { id, title, rhythm, category?, createdAt }
 TodoItem { id, title, done, doneAt?, routineId?, dueDate: "YYYY-MM-DD", createdAt }
 ```
 
@@ -30,3 +30,10 @@ todos. Checked-off todos stay when a day chip is toggled off, so history isn't l
 
 Web first, iOS/Android from the same Expo codebase (see CLAUDE.md). No backend: everything
 persists locally via AsyncStorage under `routine-week/app-store`.
+
+## Categories
+
+A routine can optionally belong to a category (free text such as "Chores" or "Skin care").
+Categories aren't separate records: the list of categories is just the distinct names in use,
+matched case-insensitively when typing. The Routines tab groups by category (alphabetical,
+"No category" last) once any routine has one.

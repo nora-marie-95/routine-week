@@ -10,6 +10,7 @@ export const useRoutineComposer = () => {
   const [visible, setVisible] = useState(false);
   const [title, setTitle] = useState("");
   const [rhythm, setRhythm] = useState<Rhythm>(DEFAULT_RHYTHM);
+  const [category, setCategory] = useState<string | undefined>();
   const createRoutine = useAppStore((state) => {
     return state.routine.create;
   });
@@ -21,11 +22,12 @@ export const useRoutineComposer = () => {
     setVisible(false);
     setTitle("");
     setRhythm(DEFAULT_RHYTHM);
+    setCategory(undefined);
   };
   const submit = () => {
     const trimmedTitle = title.trim();
     if (trimmedTitle.length > 0) {
-      createRoutine({ title: trimmedTitle, rhythm });
+      createRoutine({ title: trimmedTitle, rhythm, category });
     }
     close();
   };
@@ -36,6 +38,8 @@ export const useRoutineComposer = () => {
     onChangeTitle: setTitle,
     rhythm,
     onChangeRhythm: setRhythm,
+    category,
+    onChangeCategory: setCategory,
     open,
     close,
     submit,

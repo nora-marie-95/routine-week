@@ -6,6 +6,7 @@ import { PencilIcon, Trash2Icon } from "lucide-react-native";
 
 import { type Routine, formatRhythm } from "@/domains/routine";
 import { useAppStore } from "@/domains/store";
+import { CategoryPicker } from "@/features/routines/client/components/category-picker";
 import { DayChips } from "@/features/routines/client/components/day-chips";
 import { RoutineProgressLabel } from "@/features/routines/client/components/routine-progress";
 import { useRoutineEditor } from "@/features/routines/client/hooks/use-routine-editor";
@@ -73,7 +74,9 @@ export const RoutineRow = (props: RoutineRowProps) => {
         onClose={editor.close}
         onDelete={onRemovePress}
         testID={`routine-edit-input-${routine.id}`}
-      />
+      >
+        <CategoryPicker value={editor.category} onChange={editor.onChangeCategory} />
+      </ComposerModal>
     </>
   );
 };
