@@ -36,4 +36,6 @@ persists locally via AsyncStorage under `routine-week/app-store`.
 A routine can optionally belong to a category (free text such as "Chores" or "Skin care").
 Categories aren't separate records: the list of categories is just the distinct names in use,
 matched case-insensitively when typing. The Routines tab groups by category (alphabetical,
-"No category" last) once any routine has one.
+"No category" last) once any routine has one. The Today tab groups the same way: a todo takes
+its routine's category, todos without a routine land under "No category", and done todos sink
+to the bottom of their own group. The Week tab stays grouped by day only.

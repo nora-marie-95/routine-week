@@ -84,4 +84,20 @@ describe("planning a routine across the week", () => {
 
     expect(useAppStore.getState().routines[1].category).toBe("Skin care");
   });
+
+  it("groups today's todos under their routine's category", async () => {
+    useAppStore.getState().routine.create({
+      title: "Dishes",
+      rhythm: { kind: "daily" },
+      category: "Chores",
+    });
+    useAppStore.getState().todo.toggleRoutineDay(useAppStore.getState().routines[0].id, todayKey());
+    useAppStore.getState().todo.create({ title: "Call the dentist", dueDate: todayKey() });
+
+    await render(<TodayScreen />);
+
+    expect(screen.getByText("Chores")).toBeTruthy();
+    expect(screen.getByText("No category")).toBeTruthy();
+    expect(screen.getByText("Call the dentist")).toBeTruthy();
+  });
 });
