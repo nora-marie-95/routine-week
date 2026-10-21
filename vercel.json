@@ -1,0 +1,8 @@
+{
+  "buildCommand": "npx expo export --platform web && cp 'dist/routine/[id].html' dist/routine/_detail.html && cp dist/+not-found.html dist/_not-found.html",
+  "outputDirectory": "dist",
+  "rewrites": [
+    { "source": "/routine/:id", "destination": "/routine/_detail.html" },
+    { "source": "/(.*)", "destination": "/_not-found.html" }
+  ]
+}
