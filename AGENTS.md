@@ -28,8 +28,10 @@ todos. Checked-off todos stay when a day chip is toggled off, so history isn't l
 
 ## Platforms & scope
 
-Web first, iOS/Android from the same Expo codebase (see CLAUDE.md). No backend: everything
-persists locally via AsyncStorage under `routine-week/app-store`.
+Web first, iOS/Android from the same Expo codebase (see CLAUDE.md). Data always persists locally
+via AsyncStorage under `routine-week/app-store`. On the web, an optional Google sign-in (Firebase
+Auth) also saves it to the user's account in Firestore so it syncs across devices — see
+`docs/firebase-setup.md`. Without the Firebase env vars the app is purely local.
 
 ## Categories
 

@@ -2,12 +2,20 @@ import { Tabs } from "expo-router";
 
 import { CalendarCheckIcon, CalendarDaysIcon, RepeatIcon } from "lucide-react-native";
 
+import { AccountButton } from "@/features/cloud-sync";
+
 const TAB_ICON_SIZE = 24;
 const ACTIVE_TAB_COLOR = "#1C1C1E";
 
+const renderAccountButton = () => {
+  return <AccountButton />;
+};
+
 const TabsLayout = () => {
   return (
-    <Tabs screenOptions={{ tabBarActiveTintColor: ACTIVE_TAB_COLOR }}>
+    <Tabs
+      screenOptions={{ tabBarActiveTintColor: ACTIVE_TAB_COLOR, headerRight: renderAccountButton }}
+    >
       <Tabs.Screen
         name="index"
         options={{
