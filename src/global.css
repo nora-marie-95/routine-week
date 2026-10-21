@@ -11,3 +11,16 @@
   --font-rounded: "SF Pro Rounded", "Hiragino Maru Gothic ProN", Meiryo, "MS PGothic", sans-serif;
   --font-serif: Georgia, "Times New Roman", serif;
 }
+
+/*
+ * Web only. Mobile browsers slide their address bar and toolbar in and out; the default 100%
+ * height is the tallest the viewport ever gets, so the tab bar and + button end up behind that
+ * chrome. dvh follows the visible height. The reset's 100% stays as the fallback.
+ */
+@supports (height: 100dvh) {
+  html,
+  body,
+  #root {
+    height: 100dvh;
+  }
+}
