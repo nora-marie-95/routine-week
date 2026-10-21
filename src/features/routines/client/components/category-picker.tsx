@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ScrollView, View } from "react-native";
+import { View } from "react-native";
 
 import { categoryNames, resolveCategory } from "@/domains/routine";
 import { useRoutines } from "@/domains/store";
@@ -31,49 +31,54 @@ export const CategoryPicker = (props: CategoryPickerProps) => {
   const { value, onChange } = props;
   const routines = useRoutines();
   const [adding, setAdding] = useState(false);
-  const [draft, setDraft] = useState("");
   const existing = categoryNames(routines);
-  /** A category typed but not saved on any routine yet still needs a chip to show it's chosen. */
-  const names = value !== undefined && !existing.includes(value) ? [...existing, value] : existing;
+  /** A category chosen but not saved on any routine yet still needs a chip — once typing is done. */
+  const isUnsaved = value !== undefined && !existing.includes(value);
+  const names = isUnsaved && !adding ? [...existing, value] : existing;
   const onNonePress = () => {
+    setAdding(false);
     onChange(undefined);
   };
+  const onExistingSelect = (category: string) => {
+    setAdding(false);
+    onChange(category);
+  };
   const onNewPress = () => {
+    onChange(undefined);
     setAdding(true);
   };
+  /** Applied as you type, so saving the routine without pressing Enter still keeps the name. */
+  const onDraftChange = (draft: string) => {
+    onChange(resolveCategory(draft, existing));
+  };
   const onDraftSubmit = () => {
-    const category = resolveCategory(draft, existing);
-    if (category !== undefined) {
-      onChange(category);
-    }
-    setDraft("");
     setAdding(false);
   };
   return (
     <View className="gap-2">
-      <ScrollView
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        contentContainerClassName="flex-row items-center gap-2"
-      >
+      <View className="flex-row flex-wrap gap-2">
         <Chip
           label="No category"
-          selected={value === undefined}
+          selected={value === undefined && !adding}
           onPress={onNonePress}
           testID="category-chip-none"
         />
         {names.map((name) => {
           return (
-            <CategoryChip key={name} name={name} selected={value === name} onSelect={onChange} />
+            <CategoryChip
+              key={name}
+              name={name}
+              selected={value === name}
+              onSelect={onExistingSelect}
+            />
           );
         })}
-        <Chip label="+ New" selected={false} onPress={onNewPress} testID="category-chip-new" />
-      </ScrollView>
+        <Chip label="+ New" selected={adding} onPress={onNewPress} testID="category-chip-new" />
+      </View>
       {adding ? (
         <TextField
           autoFocus
-          value={draft}
-          onChangeText={setDraft}
+          onChangeText={onDraftChange}
           placeholder="Category name, e.g. Chores"
           onSubmitEditing={onDraftSubmit}
           testID="category-new-input"

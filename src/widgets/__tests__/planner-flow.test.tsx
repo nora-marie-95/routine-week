@@ -66,4 +66,22 @@ describe("planning a routine across the week", () => {
     expect(screen.getByText("chores")).toBeTruthy();
     expect(screen.getByText("No category")).toBeTruthy();
   });
+
+  it("keeps a new category typed without pressing Enter, and offers it for the next routine", async () => {
+    await render(<RoutinesScreen />);
+    await fireEvent.press(screen.getByTestId("add-routine-fab"));
+    await fireEvent.changeText(screen.getByTestId("add-routine-input"), "Serum");
+    await fireEvent.press(screen.getByTestId("category-chip-new"));
+    await fireEvent.changeText(screen.getByTestId("category-new-input"), "Skin care");
+    await fireEvent.press(screen.getByText("Add"));
+
+    expect(useAppStore.getState().routines[0].category).toBe("Skin care");
+
+    await fireEvent.press(screen.getByTestId("add-routine-fab"));
+    await fireEvent.changeText(screen.getByTestId("add-routine-input"), "Moisturiser");
+    await fireEvent.press(screen.getByTestId("category-chip-Skin care"));
+    await fireEvent.press(screen.getByText("Add"));
+
+    expect(useAppStore.getState().routines[1].category).toBe("Skin care");
+  });
 });
