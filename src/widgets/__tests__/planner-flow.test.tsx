@@ -127,4 +127,19 @@ describe("planning a routine across the week", () => {
       category: "Chores",
     });
   });
+
+  it("edits and deletes a todo by tapping its title", async () => {
+    useAppStore.getState().todo.create({ title: "Call the dentist", dueDate: todayKey() });
+    const id = useAppStore.getState().todoItems[0].id;
+
+    await render(<TodayScreen />);
+    await fireEvent.press(screen.getByTestId(`todo-edit-${id}`));
+    await fireEvent.changeText(screen.getByTestId(`todo-edit-input-${id}`), "Call the doctor");
+    await fireEvent.press(screen.getByText("Save"));
+    expect(useAppStore.getState().todoItems[0].title).toBe("Call the doctor");
+
+    await fireEvent.press(screen.getByTestId(`todo-edit-${id}`));
+    await fireEvent.press(screen.getByTestId("delete-button"));
+    expect(useAppStore.getState().todoItems).toHaveLength(0);
+  });
 });

@@ -1,7 +1,5 @@
 import { Pressable, Text, View } from "react-native";
 
-import { PencilIcon, Trash2Icon } from "lucide-react-native";
-
 import { useAppStore, useRoutine } from "@/domains/store";
 import type { TodoItem } from "@/domains/todo-item";
 import { TodoFields } from "@/features/todos/client/components/todo-fields";
@@ -12,9 +10,6 @@ import { todayKey } from "@/shared/util";
 type TodoRowProps = {
   todoItem: TodoItem;
 };
-
-const ACTION_ICON_SIZE = 18;
-const ACTION_ICON_COLOR = "#8E8E93";
 
 /** Things' pattern: the linked routine is a plain gray subtitle, not a badge. */
 export const TodoRow = (props: TodoRowProps) => {
@@ -49,26 +44,16 @@ export const TodoRow = (props: TodoRowProps) => {
         onToggle={onToggle}
         testID={`todo-checkbox-${todoItem.id}`}
       />
-      <View className="flex-1">
+      <Pressable
+        onPress={editor.open}
+        testID={`todo-edit-${todoItem.id}`}
+        accessibilityRole="button"
+        accessibilityLabel="Edit todo"
+        className="flex-1"
+      >
         <Text className={titleClassName}>{todoItem.title}</Text>
         {isOverdue ? <Text className="text-sm text-red-600">Overdue</Text> : null}
         {showsRoutine ? <Text className="text-sm text-subtle">{routine.title}</Text> : null}
-      </View>
-      <Pressable
-        hitSlop={8}
-        onPress={editor.open}
-        testID={`todo-edit-${todoItem.id}`}
-        accessibilityLabel="Edit todo"
-      >
-        <PencilIcon size={ACTION_ICON_SIZE} color={ACTION_ICON_COLOR} />
-      </Pressable>
-      <Pressable
-        hitSlop={8}
-        onPress={onRemovePress}
-        testID={`todo-delete-${todoItem.id}`}
-        accessibilityLabel="Delete todo"
-      >
-        <Trash2Icon size={ACTION_ICON_SIZE} color={ACTION_ICON_COLOR} />
       </Pressable>
       <ComposerModal
         visible={editor.visible}
