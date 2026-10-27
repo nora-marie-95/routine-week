@@ -1,11 +1,22 @@
-import { beforeEach, describe, expect, it } from "@jest/globals";
+import { beforeEach, describe, expect, it, jest } from "@jest/globals";
 import { fireEvent, render, screen } from "@testing-library/react-native";
 
 import { useAppStore } from "@/domains/store";
 import { todayKey } from "@/shared/util";
+import { RoutineDetailScreen } from "@/widgets/routine-detail-screen";
 import { RoutinesScreen } from "@/widgets/routines-screen";
 import { TodayScreen } from "@/widgets/today-screen";
 import { WeekScreen } from "@/widgets/week-screen";
+
+const mockParams = { id: "" };
+
+jest.mock("expo-router", () => {
+  return {
+    Stack: { Screen: () => {return null} },
+    router: { back: jest.fn(), push: jest.fn() },
+    useLocalSearchParams: () => {return mockParams},
+  };
+});
 
 beforeEach(() => {
   useAppStore.setState({ routines: [], todoItems: [] });
@@ -99,5 +110,21 @@ describe("planning a routine across the week", () => {
     expect(screen.getByText("Chores")).toBeTruthy();
     expect(screen.getByText("No category")).toBeTruthy();
     expect(screen.getByText("Call the dentist")).toBeTruthy();
+  });
+
+  it("edits a routine's title and category from its detail screen", async () => {
+    useAppStore.getState().routine.create({ title: "Dishes", rhythm: { kind: "daily" } });
+    const id = useAppStore.getState().routines[0].id;
+    mockParams.id = id;
+
+    await render(<RoutineDetailScreen />);
+    await fireEvent.changeText(screen.getByTestId("routine-title-input"), "Wash dishes");
+    await fireEvent.press(screen.getByTestId("category-chip-new"));
+    await fireEvent.changeText(screen.getByTestId("category-new-input"), "Chores");
+
+    expect(useAppStore.getState().routines[0]).toMatchObject({
+      title: "Wash dishes",
+      category: "Chores",
+    });
   });
 });

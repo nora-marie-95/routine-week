@@ -3,7 +3,13 @@ import { Text, View } from "react-native";
 import { Stack, useLocalSearchParams } from "expo-router";
 
 import { useRoutine } from "@/domains/store";
-import { DayChips, RoutineHistory, RoutineRhythm } from "@/features/routines";
+import {
+  DayChips,
+  RoutineDeleteButton,
+  RoutineDetails,
+  RoutineHistory,
+  RoutineRhythm,
+} from "@/features/routines";
 import { EmptyState, Screen } from "@/shared/ui-kit";
 
 export const RoutineDetailScreen = () => {
@@ -22,7 +28,7 @@ export const RoutineDetailScreen = () => {
     <Screen>
       <Stack.Screen options={{ title: routine.title }} />
       <View className="gap-5 px-4 pt-4">
-        <Text className="text-2xl font-semibold text-ink">{routine.title}</Text>
+        <RoutineDetails routine={routine} />
         <View className="gap-2">
           <Text className="text-sm font-semibold uppercase tracking-wide text-subtle">
             This week
@@ -31,6 +37,7 @@ export const RoutineDetailScreen = () => {
         </View>
         <RoutineRhythm routineId={routine.id} />
         <RoutineHistory routine={routine} />
+        <RoutineDeleteButton routineId={routine.id} />
       </View>
     </Screen>
   );
