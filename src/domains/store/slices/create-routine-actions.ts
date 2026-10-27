@@ -67,6 +67,22 @@ export const createRoutineActions: StateCreator<
           });
         });
       },
+      restore: (routine, todoIds) => {
+        set((state) => {
+          const exists = state.routines.some((item) => {
+            return item.id === routine.id;
+          });
+          if (exists) {
+            return;
+          }
+          state.routines.push(routine);
+          state.todoItems.forEach((todoItem) => {
+            if (todoIds.includes(todoItem.id)) {
+              todoItem.routineId = routine.id;
+            }
+          });
+        });
+      },
     },
   };
 };

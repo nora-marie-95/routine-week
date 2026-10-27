@@ -20,6 +20,8 @@ export const WeekScreen = () => {
           dueDate={composer.dueDate}
           onRoutineIdChange={composer.onChangeRoutineId}
           onDueDateChange={composer.onChangeDueDate}
+          collapsed={composer.collapsed}
+          onExpand={composer.onExpand}
         />
       </ComposerModal>
     </Screen>

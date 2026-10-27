@@ -1,4 +1,5 @@
-import { SectionList, Text } from "react-native";
+import { useState } from "react";
+import { Pressable, SectionList, Text, View } from "react-native";
 
 import { type TodoGroup, groupTodoItems, useRoutines, useTodayTodoItems } from "@/domains/store";
 import type { TodoItem } from "@/domains/todo-item";
@@ -14,9 +15,19 @@ type SectionHeaderInfo = {
 const LIST_PADDING = { paddingHorizontal: 16, paddingBottom: 96 };
 
 export const TodayList = () => {
-  const todoItems = useTodayTodoItems(todayKey());
+  const allTodoItems = useTodayTodoItems(todayKey());
   const routines = useRoutines();
+  const [showDone, setShowDone] = useState(false);
+  const todoItems = allTodoItems.filter((todoItem) => {
+    return !todoItem.done;
+  });
+  const doneItems = allTodoItems.filter((todoItem) => {
+    return todoItem.done;
+  });
   const groups = groupTodoItems(todoItems, routines);
+  const onToggleDone = () => {
+    setShowDone(!showDone);
+  };
   /** Headers only appear once at least one todo has a category; otherwise it's a plain list. */
   const isGrouped = groups.some((group) => {
     return group.title !== undefined;
@@ -34,9 +45,26 @@ export const TodayList = () => {
       </Text>
     );
   };
-  if (todoItems.length === 0) {
+  if (allTodoItems.length === 0) {
     return <EmptyState message="Nothing planned for today — tap + to add a todo." />;
   }
+  /** Finished todos tuck away at the bottom so the open ones stay in view. */
+  const footer =
+    doneItems.length > 0 ? (
+      <View>
+        <Pressable onPress={onToggleDone} testID="toggle-done" className="py-4">
+          <Text className="text-sm font-semibold uppercase tracking-wide text-subtle">
+            {showDone ? "Hide" : "Show"} done ({doneItems.length})
+          </Text>
+        </Pressable>
+        {showDone
+          ? doneItems.map((todoItem) => {
+              return <TodoRow key={todoItem.id} todoItem={todoItem} />;
+            })
+          : null}
+      </View>
+    ) : undefined;
+  const header = todoItems.length === 0 ? <EmptyState message="All done for today." /> : undefined;
   return (
     <SectionList
       className="flex-1"
@@ -47,6 +75,8 @@ export const TodayList = () => {
       }}
       renderItem={renderItem}
       renderSectionHeader={renderSectionHeader}
+      ListHeaderComponent={header}
+      ListFooterComponent={footer}
       stickySectionHeadersEnabled={false}
     />
   );

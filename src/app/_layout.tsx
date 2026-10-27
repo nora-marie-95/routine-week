@@ -4,6 +4,7 @@ import { DarkTheme, DefaultTheme, Stack, ThemeProvider } from "expo-router";
 
 import "@/global.css";
 import { useHideSplashScreen } from "@/lib/splash-screen";
+import { UndoToast } from "@/shared/undo";
 
 const RootLayout = () => {
   const colorScheme = useColorScheme();
@@ -15,6 +16,7 @@ const RootLayout = () => {
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
         <Stack.Screen name="routine/[id]" />
       </Stack>
+      <UndoToast />
     </ThemeProvider>
   );
 };

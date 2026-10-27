@@ -33,7 +33,9 @@ export const RoutineList = () => {
     );
   };
   if (routines.length === 0) {
-    return <EmptyState message="No routines yet — tap + to add one." />;
+    return (
+      <EmptyState message="No routines yet — tap + to add one, then plan it onto days of the week." />
+    );
   }
   return (
     <SectionList

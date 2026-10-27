@@ -54,6 +54,16 @@ export const createTodoActions: StateCreator<
           });
         });
       },
+      restore: (todoItem) => {
+        set((state) => {
+          const exists = state.todoItems.some((item) => {
+            return item.id === todoItem.id;
+          });
+          if (!exists) {
+            state.todoItems.push(todoItem);
+          }
+        });
+      },
       link: (id, routineId) => {
         set((state) => {
           const todoItem = state.todoItems.find((item) => {

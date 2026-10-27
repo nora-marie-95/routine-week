@@ -8,6 +8,7 @@ export const useTodoComposer = () => {
   const [title, setTitle] = useState("");
   const [routineId, setRoutineId] = useState<string | undefined>();
   const [dueDate, setDueDate] = useState(todayKey);
+  const [expanded, setExpanded] = useState(false);
   const createTodoItem = useAppStore((state) => {
     return state.todo.create;
   });
@@ -16,7 +17,11 @@ export const useTodoComposer = () => {
   const openOn = (day: string) => {
     setRoutineId(undefined);
     setDueDate(day);
+    setExpanded(false);
     setVisible(true);
+  };
+  const onExpand = () => {
+    setExpanded(true);
   };
   const close = () => {
     setVisible(false);
@@ -38,6 +43,8 @@ export const useTodoComposer = () => {
     onChangeRoutineId: setRoutineId,
     dueDate,
     onChangeDueDate: setDueDate,
+    collapsed: !expanded,
+    onExpand,
     openOn,
     close,
     submit,

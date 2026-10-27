@@ -2,6 +2,7 @@ import { beforeEach, describe, expect, it, jest } from "@jest/globals";
 import { fireEvent, render, screen } from "@testing-library/react-native";
 
 import { useAppStore } from "@/domains/store";
+import { UndoToast } from "@/shared/undo";
 import { todayKey } from "@/shared/util";
 import { RoutineDetailScreen } from "@/widgets/routine-detail-screen";
 import { RoutinesScreen } from "@/widgets/routines-screen";
@@ -12,9 +13,15 @@ const mockParams = { id: "" };
 
 jest.mock("expo-router", () => {
   return {
-    Stack: { Screen: () => {return null} },
+    Stack: {
+      Screen: () => {
+        return null;
+      },
+    },
     router: { back: jest.fn(), push: jest.fn() },
-    useLocalSearchParams: () => {return mockParams},
+    useLocalSearchParams: () => {
+      return mockParams;
+    },
   };
 });
 
@@ -141,5 +148,38 @@ describe("planning a routine across the week", () => {
     await fireEvent.press(screen.getByTestId(`todo-edit-${id}`));
     await fireEvent.press(screen.getByTestId("delete-button"));
     expect(useAppStore.getState().todoItems).toHaveLength(0);
+  });
+
+  it("undoes a deleted todo", async () => {
+    useAppStore.getState().todo.create({ title: "Call the dentist", dueDate: todayKey() });
+    const id = useAppStore.getState().todoItems[0].id;
+
+    await render(
+      <>
+        <TodayScreen />
+        <UndoToast />
+      </>,
+    );
+    await fireEvent.press(screen.getByTestId(`todo-edit-${id}`));
+    await fireEvent.press(screen.getByTestId("delete-button"));
+    expect(useAppStore.getState().todoItems).toHaveLength(0);
+
+    await fireEvent.press(screen.getByTestId("undo-button"));
+    expect(useAppStore.getState().todoItems[0].title).toBe("Call the dentist");
+  });
+
+  it("collapses done todos and keeps day and routine pickers behind a link when adding", async () => {
+    useAppStore.getState().todo.create({ title: "Open one", dueDate: todayKey() });
+    useAppStore.getState().todo.create({ title: "Finished one", dueDate: todayKey() });
+    useAppStore.getState().todo.toggle(useAppStore.getState().todoItems[1].id);
+
+    await render(<TodayScreen />);
+    expect(screen.queryByText("Finished one")).toBeNull();
+    await fireEvent.press(screen.getByTestId("toggle-done"));
+    expect(screen.getByText("Finished one")).toBeTruthy();
+
+    await fireEvent.press(screen.getByTestId("add-todo-fab"));
+    expect(screen.queryByTestId("day-chip-picker")).toBeNull();
+    expect(screen.getByTestId("todo-more-options")).toBeTruthy();
   });
 });

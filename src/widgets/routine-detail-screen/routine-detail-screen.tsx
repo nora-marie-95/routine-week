@@ -37,7 +37,7 @@ export const RoutineDetailScreen = () => {
         </View>
         <RoutineRhythm routineId={routine.id} />
         <RoutineHistory routine={routine} />
-        <RoutineDeleteButton routineId={routine.id} />
+        <RoutineDeleteButton routine={routine} />
       </View>
     </Screen>
   );

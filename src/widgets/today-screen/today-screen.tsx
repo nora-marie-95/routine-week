@@ -28,6 +28,8 @@ export const TodayScreen = () => {
           dueDate={composer.dueDate}
           onRoutineIdChange={composer.onChangeRoutineId}
           onDueDateChange={composer.onChangeDueDate}
+          collapsed={composer.collapsed}
+          onExpand={composer.onExpand}
         />
       </ComposerModal>
     </Screen>

@@ -5,6 +5,7 @@ import type { TodoItem } from "@/domains/todo-item";
 import { TodoFields } from "@/features/todos/client/components/todo-fields";
 import { useTodoEditor } from "@/features/todos/client/hooks/use-todo-editor";
 import { Checkbox, ComposerModal } from "@/shared/ui-kit";
+import { useUndoStore } from "@/shared/undo";
 import { todayKey } from "@/shared/util";
 
 type TodoRowProps = {
@@ -20,6 +21,12 @@ export const TodoRow = (props: TodoRowProps) => {
   const removeTodo = useAppStore((state) => {
     return state.todo.remove;
   });
+  const restoreTodo = useAppStore((state) => {
+    return state.todo.restore;
+  });
+  const offerUndo = useUndoStore((state) => {
+    return state.offer;
+  });
   const routine = useRoutine(todoItem.routineId);
   const editor = useTodoEditor(todoItem);
   const onToggle = () => {
@@ -27,6 +34,9 @@ export const TodoRow = (props: TodoRowProps) => {
   };
   const onRemovePress = () => {
     removeTodo(todoItem.id);
+    offerUndo(`Deleted "${todoItem.title}"`, () => {
+      restoreTodo(todoItem);
+    });
   };
   const isOverdue = !todoItem.done && todoItem.dueDate < todayKey();
   /** A todo added straight from its routine carries the same name — repeating it adds nothing. */

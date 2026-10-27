@@ -2,19 +2,38 @@ import { Pressable, Text } from "react-native";
 
 import { router } from "expo-router";
 
+import type { Routine } from "@/domains/routine";
 import { useAppStore } from "@/domains/store";
+import { useUndoStore } from "@/shared/undo";
 
 type RoutineDeleteButtonProps = {
-  routineId: string;
+  routine: Routine;
 };
 
 export const RoutineDeleteButton = (props: RoutineDeleteButtonProps) => {
-  const { routineId } = props;
+  const { routine } = props;
   const removeRoutine = useAppStore((state) => {
     return state.routine.remove;
   });
+  const restoreRoutine = useAppStore((state) => {
+    return state.routine.restore;
+  });
+  const offerUndo = useUndoStore((state) => {
+    return state.offer;
+  });
   const onPress = () => {
-    removeRoutine(routineId);
+    const todoIds = useAppStore
+      .getState()
+      .todoItems.filter((todoItem) => {
+        return todoItem.routineId === routine.id;
+      })
+      .map((todoItem) => {
+        return todoItem.id;
+      });
+    removeRoutine(routine.id);
+    offerUndo(`Deleted "${routine.title}"`, () => {
+      restoreRoutine(routine, todoIds);
+    });
     router.back();
   };
   return (
