@@ -3,7 +3,7 @@ import { fireEvent, render, screen } from "@testing-library/react-native";
 
 import { useAppStore } from "@/domains/store";
 import { UndoToast } from "@/shared/undo";
-import { todayKey } from "@/shared/util";
+import { shiftDateKey, todayKey } from "@/shared/util";
 import { RoutineDetailScreen } from "@/widgets/routine-detail-screen";
 import { RoutinesScreen } from "@/widgets/routines-screen";
 import { TodayScreen } from "@/widgets/today-screen";
@@ -181,5 +181,20 @@ describe("planning a routine across the week", () => {
     await fireEvent.press(screen.getByTestId("add-todo-fab"));
     expect(screen.queryByTestId("day-chip-picker")).toBeNull();
     expect(screen.getByTestId("todo-more-options")).toBeTruthy();
+  });
+
+  it("counts routine progress by planned day, not by when a todo was ticked", async () => {
+    const store = useAppStore.getState();
+    store.routine.create({ title: "Epiduo", rhythm: { kind: "timesPerWeek", times: 3 } });
+    const routineId = useAppStore.getState().routines[0].id;
+    store.todo.create({ title: "Epiduo", routineId, dueDate: shiftDateKey(todayKey(), -7) });
+    store.todo.create({ title: "Epiduo", routineId, dueDate: todayKey() });
+    useAppStore.getState().todoItems.forEach((todoItem) => {
+      useAppStore.getState().todo.toggle(todoItem.id);
+    });
+
+    await render(<RoutinesScreen />);
+
+    expect(screen.getByText("1/3 this week")).toBeTruthy();
   });
 });

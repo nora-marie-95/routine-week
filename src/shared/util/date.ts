@@ -27,6 +27,11 @@ const parseDateKey = (key: string) => {
   return new Date(year, month - 1, day);
 };
 
+/** Local midnight at the start of a "YYYY-MM-DD" day, as epoch milliseconds. */
+export const dateKeyToTime = (key: string) => {
+  return parseDateKey(key).getTime();
+};
+
 export const shiftDateKey = (key: string, days: number) => {
   const date = parseDateKey(key);
   return dateKey(new Date(date.getFullYear(), date.getMonth(), date.getDate() + days));

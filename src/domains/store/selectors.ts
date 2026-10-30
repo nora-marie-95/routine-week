@@ -1,6 +1,7 @@
 import { useShallow } from "zustand/react/shallow";
 
 import { useAppStore } from "@/domains/store/use-app-store";
+import { dateKeyToTime } from "@/shared/util";
 
 export const useRoutines = () => {
   return useAppStore(
@@ -54,13 +55,17 @@ export const useRoutineDays = (routineId: string) => {
   );
 };
 
-/** Completion times of the routine's checked-off todos — the raw input for rhythm progress. */
+/**
+ * The planned days of the routine's checked-off todos — the raw input for rhythm progress.
+ * Counted by the day a todo was planned for, so ticking off an old or future todo doesn't
+ * inflate the current period.
+ */
 export const useRoutineCompletions = (routineId: string) => {
   return useAppStore(
     useShallow((state) => {
       return state.todoItems.flatMap((item) => {
         const isCompletion = item.routineId === routineId && item.done;
-        return isCompletion && item.doneAt !== undefined ? [item.doneAt] : [];
+        return isCompletion ? [dateKeyToTime(item.dueDate)] : [];
       });
     }),
   );

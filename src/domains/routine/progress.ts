@@ -12,7 +12,7 @@ export type PeriodProgress = {
 type Params = {
   rhythm: Rhythm;
   createdAt: number;
-  /** Epoch milliseconds at which each linked todo was completed. */
+  /** Epoch milliseconds of the day each checked-off linked todo was planned for. */
   completions: number[];
   at: number;
 };
