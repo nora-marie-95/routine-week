@@ -1,4 +1,5 @@
-import { Text, View } from "react-native";
+import { useState } from "react";
+import { View } from "react-native";
 
 import { Stack, useLocalSearchParams } from "expo-router";
 
@@ -9,12 +10,14 @@ import {
   RoutineDetails,
   RoutineHistory,
   RoutineRhythm,
+  WeekSwitch,
 } from "@/features/routines";
 import { EmptyState, Screen } from "@/shared/ui-kit";
 
 export const RoutineDetailScreen = () => {
   const { id } = useLocalSearchParams<{ id: string }>();
   const routine = useRoutine(id);
+  const [weekOffset, setWeekOffset] = useState(0);
 
   if (!routine) {
     return (
@@ -30,10 +33,8 @@ export const RoutineDetailScreen = () => {
       <View className="gap-5 px-4 pt-4">
         <RoutineDetails routine={routine} />
         <View className="gap-2">
-          <Text className="text-sm font-semibold uppercase tracking-wide text-subtle">
-            This week
-          </Text>
-          <DayChips routineId={routine.id} />
+          <WeekSwitch weekOffset={weekOffset} onChange={setWeekOffset} />
+          <DayChips routineId={routine.id} weekOffset={weekOffset} />
         </View>
         <RoutineRhythm routineId={routine.id} />
         <RoutineHistory routine={routine} />

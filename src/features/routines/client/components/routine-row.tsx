@@ -10,13 +10,14 @@ import { RoutineProgressLabel } from "@/features/routines/client/components/rout
 
 type RoutineRowProps = {
   routine: Routine;
+  weekOffset: number;
 };
 
 const CHEVRON_SIZE = 18;
 const CHEVRON_COLOR = "#8E8E93";
 
 export const RoutineRow = (props: RoutineRowProps) => {
-  const { routine } = props;
+  const { routine, weekOffset } = props;
   const onPress = () => {
     router.push({ pathname: "/routine/[id]", params: { id: routine.id } });
   };
@@ -35,7 +36,7 @@ export const RoutineRow = (props: RoutineRowProps) => {
         </View>
         <ChevronRightIcon size={CHEVRON_SIZE} color={CHEVRON_COLOR} />
       </Pressable>
-      <DayChips routineId={routine.id} />
+      <DayChips routineId={routine.id} weekOffset={weekOffset} />
     </View>
   );
 };

@@ -197,4 +197,17 @@ describe("planning a routine across the week", () => {
 
     expect(screen.getByText("1/3 this week")).toBeTruthy();
   });
+
+  it("plans a routine onto next week without touching this week", async () => {
+    useAppStore.getState().routine.create({ title: "Stretch", rhythm: { kind: "daily" } });
+    const id = useAppStore.getState().routines[0].id;
+    const sameDayNextWeek = shiftDateKey(todayKey(), 7);
+
+    await render(<RoutinesScreen />);
+    await fireEvent.press(screen.getByTestId("week-switch-next"));
+    await fireEvent.press(screen.getByTestId(`day-chip-${id}-${sameDayNextWeek}`));
+
+    expect(useAppStore.getState().todoItems).toHaveLength(1);
+    expect(useAppStore.getState().todoItems[0].dueDate).toBe(sameDayNextWeek);
+  });
 });

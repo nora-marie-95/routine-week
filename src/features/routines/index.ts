@@ -7,3 +7,4 @@ export { RoutineList } from "@/features/routines/client/components/routine-list"
 export { RoutineRhythm } from "@/features/routines/client/components/routine-rhythm";
 export { DayChips } from "@/features/routines/client/components/day-chips";
 export { useRoutineComposer } from "@/features/routines/client/hooks/use-routine-composer";
+export { WeekSwitch } from "@/features/routines/client/components/week-switch";

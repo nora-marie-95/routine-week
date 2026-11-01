@@ -1,8 +1,10 @@
-import { SectionList, Text } from "react-native";
+import { useState } from "react";
+import { SectionList, Text, View } from "react-native";
 
 import { type Routine, type RoutineGroup, groupRoutines } from "@/domains/routine";
 import { useRoutines } from "@/domains/store";
 import { RoutineRow } from "@/features/routines/client/components/routine-row";
+import { WeekSwitch } from "@/features/routines/client/components/week-switch";
 import { EmptyState } from "@/shared/ui-kit";
 
 type SectionHeaderInfo = {
@@ -14,13 +16,14 @@ const LIST_PADDING = { paddingHorizontal: 16, paddingBottom: 96 };
 
 export const RoutineList = () => {
   const routines = useRoutines();
+  const [weekOffset, setWeekOffset] = useState(0);
   const groups = groupRoutines(routines);
   /** Headers only appear once at least one routine has a category; otherwise it's a plain list. */
   const isGrouped = groups.some((group) => {
     return group.title !== undefined;
   });
   const renderItem = (info: { item: Routine }) => {
-    return <RoutineRow routine={info.item} />;
+    return <RoutineRow routine={info.item} weekOffset={weekOffset} />;
   };
   const renderSectionHeader = (info: SectionHeaderInfo) => {
     if (!isGrouped) {
@@ -32,6 +35,11 @@ export const RoutineList = () => {
       </Text>
     );
   };
+  const header = (
+    <View className="pt-3">
+      <WeekSwitch weekOffset={weekOffset} onChange={setWeekOffset} />
+    </View>
+  );
   if (routines.length === 0) {
     return (
       <EmptyState message="No routines yet — tap + to add one, then plan it onto days of the week." />
@@ -47,6 +55,7 @@ export const RoutineList = () => {
       }}
       renderItem={renderItem}
       renderSectionHeader={renderSectionHeader}
+      ListHeaderComponent={header}
       stickySectionHeadersEnabled={false}
     />
   );

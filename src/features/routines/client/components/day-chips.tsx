@@ -1,11 +1,15 @@
 import { Pressable, Text, View } from "react-native";
 
 import { useAppStore, useRoutineDays } from "@/domains/store";
-import { type WeekDay, todayKey, weekDays } from "@/shared/util";
+import { type WeekDay, shiftDateKey, todayKey, weekDays } from "@/shared/util";
 
 type DayChipsProps = {
   routineId: string;
+  /** Whole weeks after the current one; defaults to the current week. */
+  weekOffset?: number;
 };
+
+const DAYS_PER_WEEK = 7;
 
 type DayChipProps = {
   day: WeekDay;
@@ -39,14 +43,14 @@ const DayChip = (props: DayChipProps) => {
   );
 };
 
-/** This week, Monday to Sunday — tap a day to put the routine on it (or take it off again). */
+/** One week, Monday to Sunday — tap a day to put the routine on it (or take it off again). */
 export const DayChips = (props: DayChipsProps) => {
-  const { routineId } = props;
+  const { routineId, weekOffset = 0 } = props;
   const today = todayKey();
   const plannedDays = useRoutineDays(routineId);
   return (
     <View className="flex-row gap-1.5">
-      {weekDays(today).map((day) => {
+      {weekDays(shiftDateKey(today, weekOffset * DAYS_PER_WEEK)).map((day) => {
         return (
           <DayChip
             key={day.key}
