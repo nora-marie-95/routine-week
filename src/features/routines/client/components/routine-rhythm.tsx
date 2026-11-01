@@ -20,7 +20,9 @@ export const RoutineRhythm = (props: RoutineRhythmProps) => {
   };
   return (
     <View className="gap-2">
-      <Text className="text-sm font-semibold uppercase tracking-wide text-subtle">Rhythm</Text>
+      <Text className="text-sm font-semibold uppercase tracking-wide text-subtle">
+        Usual rhythm
+      </Text>
       <RhythmPicker value={routine?.rhythm} onChange={onChange} />
     </View>
   );

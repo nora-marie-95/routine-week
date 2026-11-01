@@ -12,6 +12,8 @@ import {
   isWeekSkipped,
   periodUnit,
   recentProgress,
+  rhythmForWeek,
+  withWeekRhythms,
 } from "@/domains/routine";
 import { useRoutineCompletions } from "@/domains/store";
 import { weekStartOf } from "@/features/routines/client/week-offset";
@@ -52,8 +54,10 @@ export const RoutineProgressLabel = (props: RoutineProgressLabelProps) => {
   const { routine, weekOffset } = props;
   const completions = useRoutineCompletions(routine.id);
   const now = useCurrentTime();
-  const { rhythm, createdAt } = routine;
-  if (isWeekSkipped(routine, weekStartOf(weekOffset))) {
+  const weekStart = weekStartOf(weekOffset);
+  const rhythm = rhythmForWeek(routine, weekStart);
+  const { createdAt } = routine;
+  if (isWeekSkipped(routine, weekStart)) {
     return (
       <Text testID={`routine-skipped-${routine.id}`} className="text-sm text-subtle">
         Skipped {weekOffset > 0 ? "next week" : "this week"}
@@ -104,7 +108,10 @@ export const RoutineHistory = (props: RoutineProgressProps) => {
   const completions = useRoutineCompletions(routine.id);
   const at = useCurrentTime();
   const { rhythm, createdAt } = routine;
-  const periods = recentProgress({ rhythm, createdAt, completions, at }, HISTORY_PERIODS);
+  const periods = withWeekRhythms(
+    routine,
+    recentProgress({ rhythm, createdAt, completions, at }, HISTORY_PERIODS),
+  );
   return (
     <View className="gap-2">
       <Text className="text-sm font-semibold uppercase tracking-wide text-subtle">History</Text>

@@ -1,5 +1,6 @@
 export { createId } from "@/shared/util/create-id";
 export {
+  dateKeyOf,
   dateKeyToTime,
   formatWeekRange,
   shiftDateKey,

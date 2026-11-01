@@ -16,3 +16,4 @@ export {
 } from "@/domains/routine/progress";
 export type { PeriodProgress } from "@/domains/routine/progress";
 export { isWeekSkipped } from "@/domains/routine/skip";
+export { rhythmForWeek, withWeekRhythms } from "@/domains/routine/week-rhythm";

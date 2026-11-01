@@ -18,9 +18,14 @@ type RhythmOption = {
 type RhythmPickerProps = {
   value: Rhythm | undefined;
   onChange: (rhythm: Rhythm) => void;
+  /** Limits the choices to these kinds; all of them when omitted. */
+  kinds?: Rhythm["kind"][];
+  /** Prefix for test ids, so two pickers on one screen stay distinguishable. */
+  testIDPrefix?: string;
 };
 
 type TimesStepperProps = {
+  testIDPrefix: string;
   times: number;
   onChange: (rhythm: Rhythm) => void;
 };
@@ -36,13 +41,14 @@ const RHYTHM_OPTIONS: RhythmOption[] = [
 ];
 
 type RhythmChipProps = {
+  testIDPrefix: string;
   option: RhythmOption;
   value: Rhythm | undefined;
   onChange: (rhythm: Rhythm) => void;
 };
 
 const RhythmChip = (props: RhythmChipProps) => {
-  const { option, value, onChange } = props;
+  const { option, value, onChange, testIDPrefix } = props;
   const selected = value?.kind === option.rhythm.kind;
   const onPress = () => {
     // Re-tapping "X× a week" keeps the count the user already chose.
@@ -53,13 +59,13 @@ const RhythmChip = (props: RhythmChipProps) => {
       label={option.label}
       selected={selected}
       onPress={onPress}
-      testID={`rhythm-chip-${option.rhythm.kind}`}
+      testID={`${testIDPrefix}-chip-${option.rhythm.kind}`}
     />
   );
 };
 
 const TimesStepper = (props: TimesStepperProps) => {
-  const { times, onChange } = props;
+  const { times, onChange, testIDPrefix } = props;
   const onDecrease = () => {
     onChange({ kind: "timesPerWeek", times: Math.max(MIN_TIMES_PER_WEEK, times - 1) });
   };
@@ -71,18 +77,18 @@ const TimesStepper = (props: TimesStepperProps) => {
       <Pressable
         hitSlop={8}
         onPress={onDecrease}
-        testID="rhythm-times-decrease"
+        testID={`${testIDPrefix}-times-decrease`}
         accessibilityLabel="Fewer times per week"
       >
         <MinusIcon size={STEPPER_ICON_SIZE} color="#1C1C1E" />
       </Pressable>
-      <Text testID="rhythm-times-value" className="text-base text-ink">
+      <Text testID={`${testIDPrefix}-times-value`} className="text-base text-ink">
         {times}× a week
       </Text>
       <Pressable
         hitSlop={8}
         onPress={onIncrease}
-        testID="rhythm-times-increase"
+        testID={`${testIDPrefix}-times-increase`}
         accessibilityLabel="More times per week"
       >
         <PlusIcon size={STEPPER_ICON_SIZE} color="#1C1C1E" />
@@ -93,23 +99,27 @@ const TimesStepper = (props: TimesStepperProps) => {
 
 /** Pick how often a routine repeats; "X× a week" reveals a stepper for the count. */
 export const RhythmPicker = (props: RhythmPickerProps) => {
-  const { value, onChange } = props;
+  const { value, onChange, kinds, testIDPrefix = "rhythm" } = props;
+  const options = RHYTHM_OPTIONS.filter((option) => {
+    return kinds === undefined || kinds.includes(option.rhythm.kind);
+  });
   return (
     <View className="gap-3">
       <View className="flex-row flex-wrap gap-2">
-        {RHYTHM_OPTIONS.map((option) => {
+        {options.map((option) => {
           return (
             <RhythmChip
               key={option.rhythm.kind}
               option={option}
               value={value}
               onChange={onChange}
+              testIDPrefix={testIDPrefix}
             />
           );
         })}
       </View>
       {value?.kind === "timesPerWeek" ? (
-        <TimesStepper times={value.times} onChange={onChange} />
+        <TimesStepper times={value.times} onChange={onChange} testIDPrefix={testIDPrefix} />
       ) : null}
     </View>
   );

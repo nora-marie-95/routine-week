@@ -3,13 +3,13 @@ import { fireEvent, render, screen } from "@testing-library/react-native";
 
 import { useAppStore } from "@/domains/store";
 import { UndoToast } from "@/shared/undo";
-import { shiftDateKey, todayKey } from "@/shared/util";
+import { shiftDateKey, todayKey, weekDays } from "@/shared/util";
 import { RoutineDetailScreen } from "@/widgets/routine-detail-screen";
 import { RoutinesScreen } from "@/widgets/routines-screen";
 import { TodayScreen } from "@/widgets/today-screen";
 import { WeekScreen } from "@/widgets/week-screen";
 
-const mockParams = { id: "" };
+const mockParams = { id: "", week: "" };
 
 jest.mock("expo-router", () => {
   return {
@@ -247,5 +247,29 @@ describe("planning a routine across the week", () => {
     await render(<RoutinesScreen />);
     await fireEvent.press(screen.getByTestId("week-switch-next"));
     expect(screen.getByText("Skipped next week")).toBeTruthy();
+  });
+
+  it("gives one week its own rhythm and shows it on the list", async () => {
+    useAppStore
+      .getState()
+      .routine.create({ title: "Laundry", rhythm: { kind: "timesPerWeek", times: 2 } });
+    const id = useAppStore.getState().routines[0].id;
+    mockParams.id = id;
+    mockParams.week = "1";
+
+    await render(<RoutineDetailScreen />);
+    await fireEvent.press(screen.getByTestId("week-rhythm-change"));
+    await fireEvent.press(screen.getByTestId("week-rhythm-chip-weekly"));
+
+    const nextMonday = weekDays(shiftDateKey(todayKey(), 7))[0].key;
+    expect(useAppStore.getState().routines[0].rhythmOverrides).toEqual({
+      [nextMonday]: { kind: "weekly" },
+    });
+    expect(useAppStore.getState().routines[0].rhythm).toEqual({ kind: "timesPerWeek", times: 2 });
+
+    await render(<RoutinesScreen />);
+    await fireEvent.press(screen.getByTestId("week-switch-next"));
+    expect(screen.getByText("0/1 next week")).toBeTruthy();
+    mockParams.week = "";
   });
 });

@@ -25,6 +25,8 @@ export const RoutineSchema = z.object({
   createdAt: z.number(),
   /** Mondays ("YYYY-MM-DD") of weeks the routine is crossed out for. */
   skippedWeeks: z.array(z.string()).optional(),
+  /** A different rhythm for a single week, keyed by that week's Monday ("YYYY-MM-DD"). */
+  rhythmOverrides: z.record(z.string(), RhythmSchema).optional(),
 });
 export type Routine = z.infer<typeof RoutineSchema>;
 

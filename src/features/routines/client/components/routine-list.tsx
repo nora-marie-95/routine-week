@@ -50,6 +50,7 @@ export const RoutineList = () => {
       className="flex-1"
       contentContainerStyle={LIST_PADDING}
       sections={groups}
+      extraData={weekOffset}
       keyExtractor={(item) => {
         return item.id;
       }}

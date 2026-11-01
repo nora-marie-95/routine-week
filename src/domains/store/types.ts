@@ -14,6 +14,8 @@ export type AppState = {
      * out also takes its open todos off that week; checked-off ones stay as history.
      */
     toggleSkipWeek: (id: string, weekStart: string) => void;
+    /** Gives one week its own rhythm; undefined goes back to the routine's usual one. */
+    setWeekRhythm: (id: string, weekStart: string, rhythm: Rhythm | undefined) => void;
     remove: (id: string) => void;
     /** Puts a deleted routine back and re-links the todos it had. No-op if it already exists. */
     restore: (routine: Routine, todoIds: string[]) => void;

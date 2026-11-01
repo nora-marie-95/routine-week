@@ -84,6 +84,22 @@ export const createRoutineActions: StateCreator<
           });
         });
       },
+      setWeekRhythm: (id, weekStart, rhythm) => {
+        set((state) => {
+          const routine = state.routines.find((item) => {
+            return item.id === id;
+          });
+          if (!routine) {
+            return;
+          }
+          const others = Object.entries(routine.rhythmOverrides ?? {}).filter(([week]) => {
+            return week !== weekStart;
+          });
+          routine.rhythmOverrides = Object.fromEntries(
+            rhythm ? [...others, [weekStart, rhythm]] : others,
+          );
+        });
+      },
       remove: (id) => {
         set((state) => {
           state.routines = state.routines.filter((item) => {

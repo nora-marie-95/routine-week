@@ -18,6 +18,11 @@ const dateKey = (date: Date) => {
   return `${date.getFullYear()}-${month}-${day}`;
 };
 
+/** The local calendar day of a moment in time, as "YYYY-MM-DD". */
+export const dateKeyOf = (time: number) => {
+  return dateKey(new Date(time));
+};
+
 export const todayKey = () => {
   return dateKey(new Date());
 };
