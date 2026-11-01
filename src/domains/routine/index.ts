@@ -15,3 +15,4 @@ export {
   recentProgress,
 } from "@/domains/routine/progress";
 export type { PeriodProgress } from "@/domains/routine/progress";
+export { isWeekSkipped } from "@/domains/routine/skip";

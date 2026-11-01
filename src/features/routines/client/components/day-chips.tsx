@@ -1,7 +1,9 @@
 import { Pressable, Text, View } from "react-native";
 
-import { useAppStore, useRoutineDays } from "@/domains/store";
-import { type WeekDay, shiftDateKey, todayKey, weekDays } from "@/shared/util";
+import { isWeekSkipped } from "@/domains/routine";
+import { useAppStore, useRoutine, useRoutineDays } from "@/domains/store";
+import { daysOfWeek, weekStartOf } from "@/features/routines/client/week-offset";
+import { type WeekDay, todayKey } from "@/shared/util";
 
 type DayChipsProps = {
   routineId: string;
@@ -9,17 +11,17 @@ type DayChipsProps = {
   weekOffset?: number;
 };
 
-const DAYS_PER_WEEK = 7;
-
 type DayChipProps = {
   day: WeekDay;
   routineId: string;
   planned: boolean;
   isToday: boolean;
+  /** The routine is crossed out for this week, so its days can't be planned. */
+  skipped: boolean;
 };
 
 const DayChip = (props: DayChipProps) => {
-  const { day, routineId, planned, isToday } = props;
+  const { day, routineId, planned, isToday, skipped } = props;
   const toggleRoutineDay = useAppStore((state) => {
     return state.todo.toggleRoutineDay;
   });
@@ -33,10 +35,11 @@ const DayChip = (props: DayChipProps) => {
       : "flex-1 items-center rounded-full border-hair border-hairline bg-transparent py-1.5";
   return (
     <Pressable
+      disabled={skipped}
       onPress={onPress}
       testID={`day-chip-${routineId}-${day.key}`}
       accessibilityLabel={`${day.weekday} ${day.dayOfMonth}`}
-      className={chipClassName}
+      className={skipped ? `${chipClassName} opacity-40` : chipClassName}
     >
       <Text className={planned ? "text-xs text-white" : "text-xs text-ink"}>{day.weekday}</Text>
     </Pressable>
@@ -48,9 +51,11 @@ export const DayChips = (props: DayChipsProps) => {
   const { routineId, weekOffset = 0 } = props;
   const today = todayKey();
   const plannedDays = useRoutineDays(routineId);
+  const routine = useRoutine(routineId);
+  const skipped = routine !== undefined && isWeekSkipped(routine, weekStartOf(weekOffset));
   return (
     <View className="flex-row gap-1.5">
-      {weekDays(shiftDateKey(today, weekOffset * DAYS_PER_WEEK)).map((day) => {
+      {daysOfWeek(weekOffset).map((day) => {
         return (
           <DayChip
             key={day.key}
@@ -58,6 +63,7 @@ export const DayChips = (props: DayChipsProps) => {
             routineId={routineId}
             planned={plannedDays.includes(day.key)}
             isToday={day.key === today}
+            skipped={skipped}
           />
         );
       })}

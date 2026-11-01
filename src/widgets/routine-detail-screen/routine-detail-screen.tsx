@@ -10,6 +10,7 @@ import {
   RoutineDetails,
   RoutineHistory,
   RoutineRhythm,
+  SkipWeekButton,
   WeekSwitch,
 } from "@/features/routines";
 import { EmptyState, Screen } from "@/shared/ui-kit";
@@ -35,6 +36,7 @@ export const RoutineDetailScreen = () => {
         <View className="gap-2">
           <WeekSwitch weekOffset={weekOffset} onChange={setWeekOffset} />
           <DayChips routineId={routine.id} weekOffset={weekOffset} />
+          <SkipWeekButton routine={routine} weekOffset={weekOffset} />
         </View>
         <RoutineRhythm routineId={routine.id} />
         <RoutineHistory routine={routine} />

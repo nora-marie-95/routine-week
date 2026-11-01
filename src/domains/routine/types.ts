@@ -23,6 +23,8 @@ export const RoutineSchema = z.object({
   /** Optional free-text group such as "Chores"; routines sharing a name are shown together. */
   category: z.string().min(1).optional(),
   createdAt: z.number(),
+  /** Mondays ("YYYY-MM-DD") of weeks the routine is crossed out for. */
+  skippedWeeks: z.array(z.string()).optional(),
 });
 export type Routine = z.infer<typeof RoutineSchema>;
 

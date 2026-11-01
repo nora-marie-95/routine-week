@@ -4,9 +4,10 @@ import { router } from "expo-router";
 
 import { ChevronRightIcon } from "lucide-react-native";
 
-import { type Routine, formatRhythm } from "@/domains/routine";
+import { type Routine, formatRhythm, isWeekSkipped } from "@/domains/routine";
 import { DayChips } from "@/features/routines/client/components/day-chips";
 import { RoutineProgressLabel } from "@/features/routines/client/components/routine-progress";
+import { weekStartOf } from "@/features/routines/client/week-offset";
 
 type RoutineRowProps = {
   routine: Routine;
@@ -21,6 +22,7 @@ export const RoutineRow = (props: RoutineRowProps) => {
   const onPress = () => {
     router.push({ pathname: "/routine/[id]", params: { id: routine.id } });
   };
+  const skipped = isWeekSkipped(routine, weekStartOf(weekOffset));
   return (
     <View testID={`routine-row-${routine.id}`} className="gap-3 border-b-hair border-hairline py-3">
       <Pressable
@@ -30,7 +32,9 @@ export const RoutineRow = (props: RoutineRowProps) => {
         className="flex-row items-center gap-3"
       >
         <View className="flex-1">
-          <Text className="text-base text-ink">{routine.title}</Text>
+          <Text className={skipped ? "text-base text-subtle line-through" : "text-base text-ink"}>
+            {routine.title}
+          </Text>
           <Text className="text-sm text-subtle">{formatRhythm(routine.rhythm)}</Text>
           <RoutineProgressLabel routine={routine} weekOffset={weekOffset} />
         </View>

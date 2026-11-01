@@ -8,3 +8,4 @@ export { RoutineRhythm } from "@/features/routines/client/components/routine-rhy
 export { DayChips } from "@/features/routines/client/components/day-chips";
 export { useRoutineComposer } from "@/features/routines/client/hooks/use-routine-composer";
 export { WeekSwitch } from "@/features/routines/client/components/week-switch";
+export { SkipWeekButton } from "@/features/routines/client/components/skip-week-button";

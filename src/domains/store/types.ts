@@ -9,6 +9,11 @@ export type AppState = {
     rename: (id: string, title: string) => void;
     setRhythm: (id: string, rhythm: Rhythm) => void;
     setCategory: (id: string, category: string | undefined) => void;
+    /**
+     * Crosses the routine out for the week starting on `weekStart`, or brings it back. Crossing
+     * out also takes its open todos off that week; checked-off ones stay as history.
+     */
+    toggleSkipWeek: (id: string, weekStart: string) => void;
     remove: (id: string) => void;
     /** Puts a deleted routine back and re-links the todos it had. No-op if it already exists. */
     restore: (routine: Routine, todoIds: string[]) => void;

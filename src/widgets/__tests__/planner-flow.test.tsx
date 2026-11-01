@@ -224,4 +224,28 @@ describe("planning a routine across the week", () => {
     await fireEvent.press(screen.getByTestId("week-switch-next"));
     expect(screen.getByText("0/1 next week")).toBeTruthy();
   });
+
+  it("crosses a routine out for next week and takes its open todos off that week", async () => {
+    useAppStore.getState().routine.create({ title: "Laundry", rhythm: { kind: "weekly" } });
+    const id = useAppStore.getState().routines[0].id;
+    const nextWeekDay = shiftDateKey(todayKey(), 7);
+    useAppStore.getState().todo.toggleRoutineDay(id, todayKey());
+    useAppStore.getState().todo.toggleRoutineDay(id, nextWeekDay);
+    mockParams.id = id;
+
+    await render(<RoutineDetailScreen />);
+    await fireEvent.press(screen.getByTestId("week-switch-next"));
+    await fireEvent.press(screen.getByTestId("routine-skip-week"));
+
+    expect(useAppStore.getState().routines[0].skippedWeeks).toHaveLength(1);
+    expect(
+      useAppStore.getState().todoItems.map((todoItem) => {
+        return todoItem.dueDate;
+      }),
+    ).toEqual([todayKey()]);
+
+    await render(<RoutinesScreen />);
+    await fireEvent.press(screen.getByTestId("week-switch-next"));
+    expect(screen.getByText("Skipped next week")).toBeTruthy();
+  });
 });
