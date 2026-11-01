@@ -32,7 +32,7 @@ export const RoutineRow = (props: RoutineRowProps) => {
         <View className="flex-1">
           <Text className="text-base text-ink">{routine.title}</Text>
           <Text className="text-sm text-subtle">{formatRhythm(routine.rhythm)}</Text>
-          <RoutineProgressLabel routine={routine} />
+          <RoutineProgressLabel routine={routine} weekOffset={weekOffset} />
         </View>
         <ChevronRightIcon size={CHEVRON_SIZE} color={CHEVRON_COLOR} />
       </Pressable>

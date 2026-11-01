@@ -18,6 +18,12 @@ type RoutineProgressProps = {
   routine: Routine;
 };
 
+type RoutineProgressLabelProps = {
+  routine: Routine;
+  /** Whole weeks after the current one, matching the week the day chips are showing. */
+  weekOffset: number;
+};
+
 /** Read once per mount; a screen left open across a period boundary refreshes on next visit. */
 const useCurrentTime = () => {
   const [at] = useState(Date.now);
@@ -25,21 +31,39 @@ const useCurrentTime = () => {
 };
 
 const HISTORY_PERIODS = 6;
+const DAYS_PER_WEEK = 7;
 const MET_COLOR = "#2BB673";
 
+/** What the progress covers once the chips look ahead: a day-long period has no "next week". */
+const unitFor = (rhythm: Rhythm, weekOffset: number) => {
+  if (weekOffset === 0) {
+    return periodUnit(rhythm);
+  }
+  if (rhythm.kind === "weekly" || rhythm.kind === "timesPerWeek") {
+    return "next week";
+  }
+  return "in that period";
+};
+
 /** "2/3 this week" for the period in progress, with a green check once the target is met. */
-export const RoutineProgressLabel = (props: RoutineProgressProps) => {
-  const { routine } = props;
+export const RoutineProgressLabel = (props: RoutineProgressLabelProps) => {
+  const { routine, weekOffset } = props;
   const completions = useRoutineCompletions(routine.id);
-  const at = useCurrentTime();
+  const now = useCurrentTime();
   const { rhythm, createdAt } = routine;
+  if (weekOffset > 0 && rhythm.kind === "daily") {
+    return null;
+  }
+  const lookAhead = new Date(now);
+  lookAhead.setDate(lookAhead.getDate() + weekOffset * DAYS_PER_WEEK);
+  const at = lookAhead.getTime();
   const progress = currentProgress({ rhythm, createdAt, completions, at });
   const textClassName = progress.met ? "text-sm text-routine" : "text-sm text-subtle";
   return (
     <View testID={`routine-progress-${routine.id}`} className="flex-row items-center gap-1">
       {progress.met ? <CheckIcon size={14} color={MET_COLOR} strokeWidth={3} /> : null}
       <Text className={textClassName}>
-        {progress.done}/{progress.target} {periodUnit(rhythm)}
+        {progress.done}/{progress.target} {unitFor(rhythm, weekOffset)}
       </Text>
     </View>
   );

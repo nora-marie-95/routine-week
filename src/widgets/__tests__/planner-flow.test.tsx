@@ -210,4 +210,18 @@ describe("planning a routine across the week", () => {
     expect(useAppStore.getState().todoItems).toHaveLength(1);
     expect(useAppStore.getState().todoItems[0].dueDate).toBe(sameDayNextWeek);
   });
+
+  it("shows next week's progress while the Next week switch is on", async () => {
+    const store = useAppStore.getState();
+    store.routine.create({ title: "Stretch", rhythm: { kind: "weekly" } });
+    const routineId = useAppStore.getState().routines[0].id;
+    store.todo.create({ title: "Stretch", routineId, dueDate: todayKey() });
+    useAppStore.getState().todo.toggle(useAppStore.getState().todoItems[0].id);
+
+    await render(<RoutinesScreen />);
+    expect(screen.getByText("1/1 this week")).toBeTruthy();
+
+    await fireEvent.press(screen.getByTestId("week-switch-next"));
+    expect(screen.getByText("0/1 next week")).toBeTruthy();
+  });
 });
